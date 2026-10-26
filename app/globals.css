@@ -1,0 +1,270 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-gray-50 text-slate-800;
+}
+img {
+  max-width: none;
+}
+@font-face {
+  font-family: "Hanken Grotesk";
+  src: url("/assets/fonts/Hanken_Grotesk/static/HankenGrotesk-Thin.ttf")
+    format("truetype");
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Hanken Grotesk";
+  src: url("/assets/fonts/Hanken_Grotesk/static/HankenGrotesk-ExtraLight.ttf")
+    format("truetype");
+  font-weight: 200;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Hanken Grotesk";
+  src: url("/assets/fonts/Hanken_Grotesk/static/HankenGrotesk-Light.ttf")
+    format("truetype");
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Hanken Grotesk";
+  src: url("/assets/fonts/Hanken_Grotesk/static/HankenGrotesk-Regular.ttf")
+    format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Hanken Grotesk";
+  src: url("/assets/fonts/Hanken_Grotesk/static/HankenGrotesk-Medium.ttf")
+    format("truetype");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Hanken Grotesk";
+  src: url("/assets/fonts/Hanken_Grotesk/static/HankenGrotesk-SemiBold.ttf")
+    format("truetype");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Hanken Grotesk";
+  src: url("/assets/fonts/Hanken_Grotesk/static/HankenGrotesk-Bold.ttf")
+    format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Hanken Grotesk";
+  src: url("/assets/fonts/Hanken_Grotesk/static/HankenGrotesk-ExtraBold.ttf")
+    format("truetype");
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Hanken Grotesk";
+  src: url("/assets/fonts/Hanken_Grotesk/static/HankenGrotesk-Black.ttf")
+    format("truetype");
+  font-weight: 900;
+  font-style: normal;
+}
+/* Gotham Regular */
+
+@font-face {
+  font-family: "Gotham";
+  src: url("/assets/fonts/gotham/gotham_thin.otf") format("opentype");
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gotham";
+  src: url("/assets/fonts/gotham/gotham_xlight.otf") format("opentype");
+  font-weight: 200;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gotham";
+  src: url("/assets/fonts/gotham/gotham_light.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gotham";
+  src: url("/assets/fonts/gotham/gotham_book.otf") format("opentype");
+  font-weight: 400; /* Regular */
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gotham";
+  src: url("/assets/fonts/gotham/gotham_medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gotham";
+  src: url("/assets/fonts/gotham/gotham_bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gotham";
+  src: url("/assets/fonts/gotham/gotham_black.otf") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gotham";
+  src: url("/assets/fonts/gotham/gotham_ultra.otf") format("opentype");
+  font-weight: 950; /* optional: custom extra-heavy */
+  font-style: normal;
+}
+
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-gotham;
+  }
+}
+
+@layer base {
+  p,
+  span,
+  div {
+    @apply font-hanken;
+  }
+}
+
+.use-gotham {
+  font-family: "Gotham" !important;
+}
+
+.ebd-text-gradient {
+  background: linear-gradient(to right, #6a49eb, #4245ea, #1b6cf6);
+  -webkit-background-clip: text;
+  /* untuk browser berbasis WebKit */
+  -webkit-text-fill-color: transparent;
+  /* bikin teks transparan */
+  background-clip: text;
+  /* standar */
+  color: transparent;
+}
+
+.border-b-gradient-primary {
+  border-bottom: 5px solid transparent;
+  border-image: linear-gradient(to right, #2a53cc, #714bef) 1;
+  border-image-slice: 1;
+}
+.border-b-gradient-primary-half-left {
+  position: relative;
+}
+
+.border-b-gradient-primary-half-left::after {
+  content: "";
+  position: absolute;
+  left: 0; /* rata kiri */
+  bottom: 10px; /* geser ke bawah pas di bawah teks */
+  width: 25%; /* hanya setengah dari teks */
+  height: 5px; /* tebal garis */
+  background: linear-gradient(to right, #2a53cc, #714bef);
+}
+.ebd-border-color-gradient {
+  border-style: solid;
+  border-color: transparent;
+  border-image: linear-gradient(to right, #6a49eb, #4245ea, #1b6cf6) 1;
+  border-image-slice: 1;
+}
+.ebd-border-color-gradient-testi {
+  position: relative;
+  padding: 2px; /* tebal border */
+  background: linear-gradient(to right, #6a49eb, #4245ea, #1b6cf6);
+}
+.home-slider-item p,
+.slider-text-tag,
+.slider-text-sub {
+  font-weight: 700;
+  font-family: "Gotham";
+  font-size: 35px;
+  max-width: 600px;
+  filter: drop-shadow(2px 4px 6px black);
+}
+.home-slider-item h2,
+.slider-text-main {
+  font-weight: 700;
+  font-family: "Gotham";
+  max-width: 600px;
+  font-size: 65px;
+  line-height: 67px;
+  filter: drop-shadow(2px 4px 6px black);
+}
+
+.border-left-contactus {
+  position: relative;
+  padding-left: 1rem; /* ruang untuk garis */
+}
+
+.border-left-contactus::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 4px; /* mulai dari tengah vertikal */
+  width: 4px; /* tebal garis */
+  height: 30%; /* tinggi 30% parent */
+  background-color: #6c4aef; /* biru */
+}
+
+.title-tab-home h2 {
+  font-size: 38px;
+  line-height: 40px;
+  font-weight: 700;
+  font-family: "Gotham";
+}
+.clip-diagonal {
+  clip-path: polygon(0 0, 90% 0, 100% 100%, 0% 100%);
+}
+
+@media only screen and (max-width: 540px) {
+  .home-slider-item p,
+  .slider-text-tag,
+  .slider-text-sub {
+    font-weight: 700;
+    font-family: "Gotham";
+    font-size: 18px;
+    max-width: 600px;
+    filter: drop-shadow(2px 4px 6px black);
+  }
+  .home-slider-item h2,
+  .slider-text-main {
+    font-weight: 700;
+    font-family: "Gotham";
+    max-width: 600px;
+    font-size: 24px;
+    line-height: 26px;
+    filter: drop-shadow(2px 4px 6px black);
+  }
+  .border-b-gradient-primary-half-left::after {
+    bottom: -10px; /* geser ke bawah pas di bawah teks */
+  }
+}

@@ -1,0 +1,102 @@
+stages:
+  - prepare
+  - test
+  - scan
+  - build
+  - deploy
+
+"Prepare Source Code":
+  stage: prepare
+  tags: ["DipsSonarqubeServer"]
+  before_script:
+    - $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"; $headers.Add("Content-Type", "application/json"); $body = "{`"messages`":`"Job $CI_JOB_NAME is Starting`",`"project_namespace`":`"$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME`", `"branch_name`":`"$CI_COMMIT_REF_NAME`"}"; $response = Invoke-RestMethod ${url_git_job_notify} -Method 'POST' -Headers $headers -Body $body ; $response | ConvertTo-Json;
+  after_script:
+    - $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"; $headers.Add("Content-Type", "application/json"); $body = "{`"messages`":`"Job $CI_JOB_NAME is Finished with $CI_JOB_STATUS status`",`"project_namespace`":`"$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME`", `"branch_name`":`"$CI_COMMIT_REF_NAME`"}"; $response = Invoke-RestMethod ${url_git_job_notify} -Method 'POST' -Headers $headers -Body $body ; $response | ConvertTo-Json;
+  only:
+    - pushes
+  except:
+    - "dev"
+  script:
+    - $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"; $headers.Add("Content-Type", "application/json"); $body = "{`"project_id`":`"$CI_PROJECT_ID`",`"project_namespace`":`"$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME`", `"branch_name`":`"$CI_COMMIT_REF_NAME`"}"; $response = Invoke-RestMethod ${url_sop_prepare} -Method 'POST' -Headers $headers -Body $body ; $response | ConvertTo-Json;
+
+"Test Source Code":
+  before_script:
+    - $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"; $headers.Add("Content-Type", "application/json"); $body = "{`"messages`":`"Job $CI_JOB_NAME is Starting`",`"project_namespace`":`"$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME`", `"branch_name`":`"$CI_COMMIT_REF_NAME`"}"; $response = Invoke-RestMethod ${url_git_job_notify} -Method 'POST' -Headers $headers -Body $body ; $response | ConvertTo-Json;
+    - nvm install 21.6.2
+    - nvm use 21.6.2
+    - npm i -g yarn
+  after_script:
+    - Remove-Item * -force  -recurse
+    - $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"; $headers.Add("Content-Type", "application/json"); $body = "{`"messages`":`"Job $CI_JOB_NAME is Finished with $CI_JOB_STATUS status`",`"project_namespace`":`"$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME`", `"branch_name`":`"$CI_COMMIT_REF_NAME`"}"; $response = Invoke-RestMethod ${url_git_job_notify} -Method 'POST' -Headers $headers -Body $body ; $response | ConvertTo-Json;
+  stage: test
+  tags: ["DipsSonarqubeServer"]
+  only:
+    - pushes
+  except:
+    - "dev"
+  script:
+    - yarn install
+    - npx prisma generate
+    - yarn build
+
+"Scan Source Code With Sonarqube":
+  before_script:
+    - $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"; $headers.Add("Content-Type", "application/json"); $body = "{`"messages`":`"Job $CI_JOB_NAME is Starting`",`"project_namespace`":`"$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME`", `"branch_name`":`"$CI_COMMIT_REF_NAME`"}"; $response = Invoke-RestMethod ${url_git_job_notify} -Method 'POST' -Headers $headers -Body $body ; $response | ConvertTo-Json;
+  after_script:
+    - Remove-Item * -force  -recurse
+    - $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"; $headers.Add("Content-Type", "application/json"); $body = "{`"messages`":`"Job $CI_JOB_NAME is Finished with $CI_JOB_STATUS status`",`"project_namespace`":`"$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME`", `"branch_name`":`"$CI_COMMIT_REF_NAME`"}"; $response = Invoke-RestMethod ${url_git_job_notify} -Method 'POST' -Headers $headers -Body $body ; $response | ConvertTo-Json;
+  stage: scan
+  tags: ["DipsSonarqubeServer"]
+  only:
+    - pushes
+  except:
+    - "dev"
+  script:
+    - sonar-scanner -D"sonar.exclusions=**/.gitlab-ci.yml,**/public/**" -D"sonar.analysis.git_projectcommitid=$CI_COMMIT_SHA" -D"sonar.analysis.git_projectid=$CI_PROJECT_ID" -D"sonar.analysis.git_projectbranch=$CI_COMMIT_REF_NAME" -D"sonar.analysis.git_userid=$GITLAB_USER_ID" -D"sonar.analysis.git_username=$GITLAB_USER_NAME" -D"sonar.projectKey=${CI_PROJECT_ID}:${CI_COMMIT_REF_NAME}" -D"sonar.sources=." -D"sonar.host.url=${url_sonar}" -D"sonar.token=${sonartoken}"
+
+build_dev:
+  before_script:
+    - 'curl --header "Content-Type: application/json" --request POST --data "{\"messages\":\"Job ${CI_JOB_NAME} is Starting\",\"project_namespace\":\"${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}\", \"branch_name\":\"${CI_COMMIT_REF_NAME}\"}" ${url_git_job_notify}'
+    - mv ${node_modules_saved_18_17}linkfe/yarn.lock . || true
+    - mv ${node_modules_saved_18_17}linkfe/node_modules . || true
+  after_script:
+    - mv yarn.lock ${node_modules_saved_18_17}linkfe/ || true
+    - mv node_modules ${node_modules_saved_18_17}linkfe/ || true
+    - 'curl --header "Content-Type: application/json" --request POST --data "{\"messages\":\"Job ${CI_JOB_NAME} is Finished with ${CI_JOB_STATUS} status\",\"project_namespace\":\"${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}\", \"branch_name\":\"${CI_COMMIT_REF_NAME}\"}" ${url_git_job_notify}'
+  stage: build
+  tags: ["DipsUbuntuServer1"]
+  only:
+    - "dev"
+  script:
+    - sudo su || true
+    - source ~/.nvm/nvm.sh || true
+    - mv staging.env .env
+    - yarn install
+    - npx prisma generate
+    - yarn build
+  artifacts:
+    paths:
+      - .next/
+
+deploy_dev:
+  stage: deploy
+  before_script:
+    - 'curl --header "Content-Type: application/json" --request POST --data "{\"messages\":\"Job ${CI_JOB_NAME} is Starting\",\"project_namespace\":\"${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}\", \"branch_name\":\"${CI_COMMIT_REF_NAME}\"}" ${url_git_job_notify}'
+  after_script:
+    - 'curl --header "Content-Type: application/json" --request POST --data "{\"messages\":\"Job ${CI_JOB_NAME} is Finished with ${CI_JOB_STATUS} status\",\"project_namespace\":\"${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}\", \"branch_name\":\"${CI_COMMIT_REF_NAME}\"}" ${url_git_job_notify}'
+  allow_failure: true
+  tags: ["DipsUbuntuServer1"]
+  only:
+    - "dev"
+  script:
+    - sudo su || true
+    - source ~/.nvm/nvm.sh || true
+    - pm2 delete linkfe || true
+    - mv staging.env .env
+    - $'find ${node_public_web_18_17}linkfe \! -wholename ${node_public_web_18_17}linkfe \! -wholename ${node_public_web_18_17}linkfe/public \! -wholename ${node_public_web_18_17}linkfe/public/uploads \! -wholename ${node_public_web_18_17}linkfe/public/uploads/* \-exec rm -rf {} + ' || true
+    - cp -r ./ ${node_public_web_18_17}linkfe/
+    - cp -r ${node_modules_saved_18_17}linkfe/* ${node_public_web_18_17}linkfe/
+    - cd ${node_public_web_18_17}linkfe/
+    - yarn prod
+  dependencies:
+    - build_dev

@@ -1,0 +1,95 @@
+{
+  "code": 200,
+  "message": "Success ",
+  "data": {
+    "title": "Data Role",
+    "header": [
+      {
+        "label": "Title",
+        "key": "title",
+        "type": "text",
+        "sort": true,
+        "typeForm": "text",
+        "join": true,
+        "joinSearch": {
+          "translations": {
+            "some": {
+              "title": {
+                "contains": "value"
+              },
+              "isDeleted": false
+            }
+          }
+        }
+      },
+      {
+        "label": "Slug",
+        "key": "slug",
+        "type": "text",
+        "sort": true,
+        "typeForm": "text",
+        "join": true,
+        "joinSearch": {
+          "translations": {
+            "some": {
+              "slug": {
+                "contains": "value"
+              },
+              "isDeleted": false
+            }
+          }
+        }
+      },
+      {
+        "label": "Created At",
+        "key": "createdAt",
+        "type": "text",
+        "sort": true,
+        "typeForm": "hide"
+      },
+      {
+        "label": "Active",
+        "key": "isActive",
+        "type": "boolean",
+        "sort": true,
+        "typeForm": "switch"
+      }
+    ],
+    "body": [
+      {
+        "id": "1",
+        "parentId": null,
+        "title": "Administration",
+        "slug": "-",
+        "isActive": true,
+        "createdAt": "06/08/2025, 17:11 WIB",
+        "children": [
+          {
+            "id": "2",
+            "parentId": "1",
+            "title": "Menu",
+            "slug": "/cms/module/menu/list",
+            "isActive": true,
+            "createdAt": "06/08/2025, 17:11 WIB",
+            "children": []
+          }
+        ]
+      }
+    ],
+    "initTable": {
+      "buttonAdd": true,
+      "searchTable": true,
+      "editTable": false,
+      "permission": {
+        "list": 0,
+        "add": 0,
+        "edit": 0,
+        "delete": 0,
+        "active": 0,
+        "reject": 0,
+        "approve": 0,
+        "view": 0
+      }
+    }
+  }
+}
